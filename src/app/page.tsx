@@ -219,7 +219,7 @@ export default function HomePage() {
       {showCreateModal && (
         <TaskModal
           mode="create"
-          onSubmit={handleCreateTask}
+          onSubmit={(data) => handleCreateTask(data as CreateTaskData)}
           onClose={() => setShowCreateModal(false)}
           assignees={assignees}
           tags={allTags}
