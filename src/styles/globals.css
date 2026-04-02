@@ -105,7 +105,7 @@ body {
 }
 
 .kanban-column {
-  @apply flex flex-col min-h-[200px] rounded-xl p-3 transition-colors duration-200;
+  @apply flex flex-col min-h-[200px] rounded-xl p-2 md:p-3 transition-colors duration-200;
   @apply border border-mc-border;
   background-color: color-mix(in srgb, var(--mc-surface) 50%, transparent);
 }
@@ -116,7 +116,7 @@ body {
 }
 
 .task-card {
-  @apply bg-mc-surface border border-mc-border rounded-lg p-3 mb-2 cursor-pointer;
+  @apply bg-mc-surface border border-mc-border rounded-lg p-2 md:p-3 mb-2 cursor-pointer;
   @apply hover:shadow-md transition-all duration-150 ease-in-out;
 }
 

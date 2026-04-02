@@ -44,16 +44,19 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   );
 
   return (
-    <div className="flex-1 overflow-x-auto overflow-y-hidden p-4">
+    <div className="flex-1 overflow-hidden p-2 md:p-4">
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex gap-2 h-full w-full">
+        <div className="flex gap-3 h-full w-full overflow-x-auto snap-x snap-mandatory pb-4 md:pb-0">
           {KANBAN_COLUMNS.map((column) => (
-            <div key={column.id} className="flex-1 min-w-0 flex flex-col">
+            <div
+              key={column.id}
+              className="flex-1 min-w-[85vw] md:min-w-[280px] lg:min-w-0 flex flex-col snap-start md:snap-none"
+            >
               {/* Column Header */}
               <div className="flex items-center gap-2 mb-3 px-1">
                 <span className="text-lg">{column.icon}</span>
-                <h2 className="font-semibold text-mc-text">{column.title}</h2>
-                <span className="ml-auto text-sm text-mc-text-secondary bg-mc-surface-hover rounded-full px-2 py-0.5">
+                <h2 className="font-semibold text-sm md:text-base text-mc-text">{column.title}</h2>
+                <span className="ml-auto text-xs md:text-sm text-mc-text-secondary bg-mc-surface-hover rounded-full px-2 py-0.5">
                   {tasksByStatus[column.id]?.length || 0}
                 </span>
               </div>

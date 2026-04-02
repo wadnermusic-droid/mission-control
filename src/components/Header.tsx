@@ -41,81 +41,87 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="flex items-center justify-between px-4 py-3 border-b border-mc-border glass sticky top-0 z-10">
-      <div className="flex items-center gap-4">
-        {!sidebarOpen && (
+    <header className="glass sticky top-0 z-10 border-b border-mc-border px-4 py-3">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex items-start gap-3">
+          {!sidebarOpen && (
+            <button
+              onClick={onToggleSidebar}
+              className="btn-ghost text-lg md:hidden"
+              title="Open tools"
+            >
+              ☰
+            </button>
+          )}
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold gradient-text">Mission Control</h1>
+            <p className="text-xs md:text-sm text-mc-text-secondary">
+              {taskCount} task{taskCount !== 1 ? 's' : ''} total
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 md:gap-3 justify-between md:justify-end">
+          <button
+            onClick={onCreateTask}
+            className="btn-primary flex items-center gap-1 text-sm px-3 py-1.5 md:px-4 md:py-2"
+          >
+            <span className="text-base md:text-lg">+</span>
+            <span className="inline md:inline">New</span>
+          </button>
+
           <button
             onClick={onToggleSidebar}
-            className="btn-ghost text-lg"
-            title="Open sidebar"
+            className="btn-secondary text-sm px-3 py-1.5 md:px-4 md:py-2 flex items-center gap-2"
           >
-            ☰
-          </button>
-        )}
-        <div>
-          <h1 className="text-2xl font-bold gradient-text">Mission Control</h1>
-          <p className="text-sm text-mc-text-secondary">
-            {taskCount} task{taskCount !== 1 ? 's' : ''} total
-          </p>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-3">
-        <button onClick={onCreateTask} className="btn-primary flex items-center gap-2">
-          <span className="text-lg">+</span>
-          New Task
-        </button>
-
-        <button 
-          onClick={onToggleSidebar} 
-          className="btn-secondary text-sm"
-        >
-          {sidebarOpen ? 'Hide Tools' : 'Show Tools'}
-        </button>
-
-        {mounted && (
-          <button
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="btn-ghost text-xl p-2 rounded-lg"
-            title="Toggle theme"
-          >
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
-        )}
-
-        {/* User Menu */}
-        <div className="relative">
-          <button
-            onClick={() => setShowUserMenu(!showUserMenu)}
-            className="btn-secondary text-sm flex items-center gap-2 px-3 py-2"
-          >
-            👤 {userName}
+            <span className="md:hidden">{sidebarOpen ? 'Tools' : 'Tools'}</span>
+            <span className="hidden md:inline">{sidebarOpen ? 'Hide Tools' : 'Show Tools'}</span>
           </button>
 
-          {showUserMenu && (
-            <div className="absolute right-0 mt-2 w-48 bg-mc-surface border border-mc-border rounded-lg shadow-lg z-20">
-              <div className="p-3 border-b border-mc-border">
-                <p className="text-sm text-mc-text-secondary">Logged in as</p>
-                <p className="font-semibold text-mc-text truncate">{userName}</p>
-              </div>
-              <a
-                href="/profile"
-                onClick={() => setShowUserMenu(false)}
-                className="w-full text-left px-4 py-2 text-sm text-mc-text hover:bg-mc-surface-hover block"
-              >
-                ⚙️ Settings
-              </a>
-              <button
-                onClick={() => {
-                  setShowUserMenu(false);
-                  handleLogout();
-                }}
-                className="w-full text-left px-4 py-2 text-sm text-mc-text hover:bg-mc-surface-hover border-t border-mc-border"
-              >
-                🚪 Logout
-              </button>
-            </div>
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="btn-ghost text-lg md:text-xl p-2 rounded-lg"
+              title="Toggle theme"
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
           )}
+
+          {/* User Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="btn-secondary text-sm flex items-center gap-2 px-3 py-2"
+            >
+              👤 {userName}
+            </button>
+
+            {showUserMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-mc-surface border border-mc-border rounded-lg shadow-lg z-20">
+                <div className="p-3 border-b border-mc-border">
+                  <p className="text-sm text-mc-text-secondary">Logged in as</p>
+                  <p className="font-semibold text-mc-text truncate">{userName}</p>
+                </div>
+                <a
+                  href="/profile"
+                  onClick={() => setShowUserMenu(false)}
+                  className="w-full text-left px-4 py-2 text-sm text-mc-text hover:bg-mc-surface-hover block"
+                >
+                  ⚙️ Settings
+                </a>
+                <button
+                  onClick={() => {
+                    setShowUserMenu(false);
+                    handleLogout();
+                  }}
+                  className="w-full text-left px-4 py-2 text-sm text-mc-text hover:bg-mc-surface-hover border-t border-mc-border"
+                >
+                  🚪 Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
