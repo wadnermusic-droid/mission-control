@@ -66,19 +66,17 @@ function validateEnv() {
   const clientParsed = clientSchema.safeParse(env);
   
   if (!serverParsed.success) {
-    console.error('❌ Invalid environment variables:');
-    serverParsed.error.errors.forEach((error) => {
-      console.error(`   ${error.path.join('.')}: ${error.message}`);
-    });
-    process.exit(1);
+    const errors = serverParsed.error.errors
+      .map((e) => `${e.path.join('.')}: ${e.message}`)
+      .join('; ');
+    throw new Error(`Invalid environment variables: ${errors}`);
   }
   
   if (!clientParsed.success) {
-    console.error('❌ Invalid public environment variables:');
-    clientParsed.error.errors.forEach((error) => {
-      console.error(`   ${error.path.join('.')}: ${error.message}`);
-    });
-    process.exit(1);
+    const errors = clientParsed.error.errors
+      .map((e) => `${e.path.join('.')}: ${e.message}`)
+      .join('; ');
+    throw new Error(`Invalid public environment variables: ${errors}`);
   }
   
   return {
