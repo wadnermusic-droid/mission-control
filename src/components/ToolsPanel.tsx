@@ -129,13 +129,35 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
 
       {/* Active Tool Content */}
       <div className="flex-1 overflow-y-auto p-4">
-        {ActiveComponent && (
+        {!selectedTask && (
+          <div className="text-center py-8 bg-mc-surface-hover rounded-lg border-2 border-dashed border-mc-border p-4">
+            <p className="text-3xl mb-3">👉</p>
+            <p className="text-sm font-semibold text-mc-text mb-2">Select a Task First</p>
+            <p className="text-xs text-mc-text-secondary mb-4">
+              Click on any task in the Kanban board to see its details and use tools
+            </p>
+            <button
+              onClick={() => {
+                // Scroll to kanban board (user responsibility)
+                alert('👈 Click on a task in the Kanban board on the left side');
+              }}
+              className="btn-secondary text-xs"
+            >
+              How to Use Tools
+            </button>
+          </div>
+        )}
+
+        {selectedTask && ActiveComponent && (
           <div className="animate-fade-in">
             {activeToolDef && (
-              <div className="tool-panel-header">
+              <div className="tool-panel-header mb-3 pb-3 border-b border-mc-border">
                 <h3 className="font-semibold text-mc-text flex items-center gap-2">
                   {activeToolDef.icon} {activeToolDef.displayName}
                 </h3>
+                <p className="text-xs text-mc-text-secondary mt-1">
+                  📌 Working on: <span className="font-semibold text-mc-text">{selectedTask.title}</span>
+                </p>
               </div>
             )}
             <ActiveComponent
@@ -147,11 +169,11 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
           </div>
         )}
 
-        {!ActiveComponent && !loadingTools && (
+        {!ActiveComponent && !loadingTools && selectedTask && (
           <div className="text-center py-8 text-mc-text-secondary">
             <p className="text-3xl mb-2">🧰</p>
             <p className="text-sm">No tool selected</p>
-            <p className="text-xs mt-1">Enable tools from settings below</p>
+            <p className="text-xs mt-1">Click a tool button above to get started</p>
           </div>
         )}
       </div>

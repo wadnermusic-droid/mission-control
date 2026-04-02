@@ -36,7 +36,20 @@ export const NotesPanel: React.FC<ToolComponentProps> = ({ selectedTask }) => {
   }, [loadNotes]);
 
   const handleAddNote = async () => {
-    if (!selectedTask || !newNote.trim()) return;
+    if (!newNote.trim()) return;
+    
+    // Demo mode: just add locally
+    if (!selectedTask) {
+      const demoNote = {
+        id: Date.now().toString(),
+        content: newNote.trim(),
+        createdAt: new Date().toISOString(),
+      };
+      setNotes((prev) => [demoNote, ...prev]);
+      setNewNote('');
+      return;
+    }
+
     setSubmitting(true);
     try {
       await createNote(selectedTask.id, newNote.trim());
@@ -59,20 +72,20 @@ export const NotesPanel: React.FC<ToolComponentProps> = ({ selectedTask }) => {
     }
   };
 
-  if (!selectedTask) {
-    return (
-      <div className="text-center py-6 text-mc-text-secondary text-sm">
-        <p className="text-2xl mb-2">📝</p>
-        <p>Select a task to view notes</p>
-      </div>
-    );
-  }
+  const isDemoMode = !selectedTask;
 
   return (
     <div className="space-y-4">
+      {isDemoMode && (
+        <div className="bg-blue-100 dark:bg-blue-900 border border-blue-400 dark:border-blue-600 rounded-lg p-3 text-xs">
+          <p className="font-semibold text-blue-900 dark:text-blue-100 mb-1">📱 Demo Mode</p>
+          <p className="text-blue-800 dark:text-blue-200">Try adding a note below! Select a task to save real notes.</p>
+        </div>
+      )}
+
       <div className="text-sm">
         <span className="text-mc-text-secondary">Notes for: </span>
-        <span className="font-medium text-mc-text">{selectedTask.title}</span>
+        <span className="font-medium text-mc-text">{isDemoMode ? '(Demo Mode)' : selectedTask?.title}</span>
       </div>
 
       {/* Add Note */}

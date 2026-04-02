@@ -73,21 +73,21 @@ export const TimeTracker: React.FC<ToolComponentProps> = ({
 
   const totalTime = entries.reduce((sum, e) => sum + e.duration, 0);
 
-  if (!selectedTask) {
-    return (
-      <div className="text-center py-6 text-mc-text-secondary text-sm">
-        <p className="text-2xl mb-2">⏱️</p>
-        <p>Select a task to track time</p>
-      </div>
-    );
-  }
+  const isDemoMode = !selectedTask;
 
   return (
     <div className="space-y-4">
+      {isDemoMode && (
+        <div className="bg-blue-100 dark:bg-blue-900 border border-blue-400 dark:border-blue-600 rounded-lg p-3 text-xs">
+          <p className="font-semibold text-blue-900 dark:text-blue-100 mb-1">📱 Demo Mode</p>
+          <p className="text-blue-800 dark:text-blue-200">Try the timer below! Select a task to save real entries.</p>
+        </div>
+      )}
+
       {/* Current task */}
       <div className="text-sm">
         <span className="text-mc-text-secondary">Tracking: </span>
-        <span className="font-medium text-mc-text">{selectedTask.title}</span>
+        <span className="font-medium text-mc-text">{isDemoMode ? '(Demo Mode)' : selectedTask?.title}</span>
       </div>
 
       {/* Timer */}
