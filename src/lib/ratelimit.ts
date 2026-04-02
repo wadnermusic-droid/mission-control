@@ -30,12 +30,11 @@ const MAX_ENTRIES = 10000;
 function evictOldEntries() {
   if (store.size <= MAX_ENTRIES) return;
   const now = Date.now();
-  for (const [key, bucket] of store) {
+  store.forEach((bucket, key) => {
     if (now - bucket.lastRefill > 3600000) {
       store.delete(key);
     }
-    if (store.size <= MAX_ENTRIES * 0.8) break;
-  }
+  });
 }
 
 export function checkRateLimit(
