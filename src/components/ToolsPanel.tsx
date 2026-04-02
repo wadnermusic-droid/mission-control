@@ -91,7 +91,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
   }
 
   return (
-    <aside className="w-80 flex-shrink-0 flex flex-col border-r border-mc-border bg-mc-surface overflow-hidden animate-slide-in">
+    <aside className="w-full lg:w-80 flex-shrink-0 flex flex-col border-r border-mc-border bg-mc-surface overflow-hidden animate-slide-in">
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-mc-border">
         <h2 className="font-semibold text-mc-text flex items-center gap-2">

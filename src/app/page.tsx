@@ -179,15 +179,37 @@ export default function HomePage() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Tools Sidebar */}
-      <ToolsPanel
-        isOpen={sidebarOpen}
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
-        tasks={tasks}
-        selectedTask={selectedTask}
-        onTaskUpdate={handleUpdateTask}
-        onRefresh={loadTasks}
-      />
+      {/* Tools Sidebar - Hidden on mobile, visible on desktop */}
+      <div className="hidden lg:block">
+        <ToolsPanel
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen(!sidebarOpen)}
+          tasks={tasks}
+          selectedTask={selectedTask}
+          onTaskUpdate={handleUpdateTask}
+          onRefresh={loadTasks}
+        />
+      </div>
+
+      {/* Tools Modal - Visible on mobile only */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm" 
+            onClick={() => setSidebarOpen(false)} 
+          />
+          <div className="absolute bottom-0 left-0 right-0 bg-mc-surface rounded-t-2xl max-h-[80vh] overflow-y-auto animate-slide-up">
+            <ToolsPanel
+              isOpen={true}
+              onToggle={() => setSidebarOpen(false)}
+              tasks={tasks}
+              selectedTask={selectedTask}
+              onTaskUpdate={handleUpdateTask}
+              onRefresh={loadTasks}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
