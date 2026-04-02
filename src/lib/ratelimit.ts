@@ -1,11 +1,9 @@
 /**
  * RATE LIMITER
  * ============
- * Token-bucket algorithm with LRU cache backing store.
- * Prevents brute force and DoS attacks.
+ * Token-bucket algorithm with Map-based store.
+ * Edge-runtime compatible (no Node.js dependencies).
  */
-
-import { LRUCache } from 'lru-cache';
 
 export interface RateLimitConfig {
   maxRequests: number;
@@ -26,13 +24,19 @@ interface TokenBucket {
   lastRefill: number;
 }
 
-// In-memory store using LRU cache
-const store = new LRUCache<string, TokenBucket>({
-  max: 10000, // Max 10k distinct identifiers
-  maxSize: 5000000, // ~5MB max
-  sizeCalculation: () => 1,
-  ttl: 1000 * 60 * 60, // 1 hour TTL
-});
+const store = new Map<string, TokenBucket>();
+const MAX_ENTRIES = 10000;
+
+function evictOldEntries() {
+  if (store.size <= MAX_ENTRIES) return;
+  const now = Date.now();
+  for (const [key, bucket] of store) {
+    if (now - bucket.lastRefill > 3600000) {
+      store.delete(key);
+    }
+    if (store.size <= MAX_ENTRIES * 0.8) break;
+  }
+}
 
 export function checkRateLimit(
   identifier: string,
@@ -44,8 +48,8 @@ export function checkRateLimit(
 
   let bucket = store.get(key);
 
-  // Initialize new bucket
   if (!bucket) {
+    evictOldEntries();
     bucket = {
       tokens: config.maxRequests,
       lastRefill: now,
@@ -60,7 +64,6 @@ export function checkRateLimit(
     };
   }
 
-  // Refill tokens based on elapsed time
   const elapsedMs = now - bucket.lastRefill;
   const tokensToAdd =
     (elapsedMs / windowMs) * config.maxRequests;
@@ -70,14 +73,12 @@ export function checkRateLimit(
   );
   bucket.lastRefill = now;
 
-  // Check if request is allowed
   const allowed = bucket.tokens >= 1;
   if (allowed) {
     bucket.tokens -= 1;
   }
 
-  const resetAt =
-    bucket.lastRefill + windowMs;
+  const resetAt = bucket.lastRefill + windowMs;
   const retryAfterSeconds = allowed
     ? 0
     : Math.ceil(
@@ -106,7 +107,6 @@ export function multiRateLimit(
       return result;
     }
   }
-  // All passed — return last result
   return checkRateLimit(
     identifier,
     configs[configs.length - 1]

@@ -1,51 +1,54 @@
 /**
  * MIDDLEWARE
  * ==========
- * Rate limiting, security headers, CORS, logging
+ * Rate limiting and CORS for API routes.
+ * Security headers are handled in next.config.js.
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from './lib/ratelimit';
-import {
-  getClientIp,
-  addSecurityHeaders,
-  addCorsHeaders,
-  createErrorResponse,
-} from './lib/api-security';
-import { env } from './lib/env';
 
-const PROTECTED_ROUTES = ['/api/tasks', '/api/tools', '/api/auth'];
+function getClientIp(request: NextRequest): string {
+  return (
+    request.headers.get('x-forwarded-for')?.split(',')[0] ||
+    request.headers.get('x-real-ip') ||
+    request.ip ||
+    '127.0.0.1'
+  );
+}
 
 export function middleware(request: NextRequest) {
   const origin = request.headers.get('origin');
   const pathname = request.nextUrl.pathname;
-  const clientIp = getClientIp(request);
 
   // Handle preflight requests
   if (request.method === 'OPTIONS') {
-    let response = new NextResponse(null, { status: 204 });
-    response = addSecurityHeaders(response);
+    const response = new NextResponse(null, { status: 204 });
     if (origin) {
-      response = addCorsHeaders(response, origin);
+      response.headers.set('Access-Control-Allow-Origin', origin);
+      response.headers.set('Access-Control-Allow-Credentials', 'true');
+      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token');
+      response.headers.set('Access-Control-Max-Age', '86400');
     }
     return response;
   }
 
   // Rate limiting for API routes
-  if (env.ENABLE_RATE_LIMITING && pathname.startsWith('/api/')) {
-    // Determine rate limit config based on route
-    let maxRequests = env.RATE_LIMIT_GLOBAL_MAX;
-    let windowSeconds = env.RATE_LIMIT_GLOBAL_WINDOW_SECONDS;
+  if (pathname.startsWith('/api/')) {
+    const clientIp = getClientIp(request);
+    let maxRequests = 100;
+    let windowSeconds = 60;
 
     if (pathname.includes('/auth/')) {
-      maxRequests = env.RATE_LIMIT_AUTH_MAX;
-      windowSeconds = env.RATE_LIMIT_AUTH_WINDOW_SECONDS;
+      maxRequests = 5;
+      windowSeconds = 60;
     } else if (pathname.includes('/tasks')) {
-      maxRequests = env.RATE_LIMIT_TASKS_MAX;
-      windowSeconds = env.RATE_LIMIT_TASKS_WINDOW_SECONDS;
+      maxRequests = 50;
+      windowSeconds = 60;
     } else if (pathname.includes('/tools')) {
-      maxRequests = env.RATE_LIMIT_TOOLS_MAX;
-      windowSeconds = env.RATE_LIMIT_TOOLS_WINDOW_SECONDS;
+      maxRequests = 30;
+      windowSeconds = 60;
     }
 
     const result = checkRateLimit(clientIp, {
@@ -55,48 +58,32 @@ export function middleware(request: NextRequest) {
     });
 
     if (!result.allowed) {
-      let response = createErrorResponse(
-        429,
-        'Too many requests. Please try again later.',
-        'RATE_LIMITED'
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.', code: 'RATE_LIMITED' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': result.retryAfterSeconds.toString(),
+            'X-RateLimit-Limit': result.limit.toString(),
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': result.resetAt.toString(),
+          },
+        }
       );
-
-      response.headers.set(
-        'Retry-After',
-        result.retryAfterSeconds.toString()
-      );
-      response.headers.set(
-        'X-RateLimit-Limit',
-        result.limit.toString()
-      );
-      response.headers.set(
-        'X-RateLimit-Remaining',
-        '0'
-      );
-      response.headers.set(
-        'X-RateLimit-Reset',
-        result.resetAt.toString()
-      );
-
-      if (origin) {
-        response = addCorsHeaders(response, origin);
-      }
-
-      return response;
     }
   }
 
-  // Continue to next middleware/route
-  let response = NextResponse.next();
-  response = addSecurityHeaders(response);
+  // Continue
+  const response = NextResponse.next();
 
   if (origin) {
-    response = addCorsHeaders(response, origin);
+    response.headers.set('Access-Control-Allow-Origin', origin);
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
   }
 
   return response;
 }
 
 export const config = {
-  matcher: [],
+  matcher: ['/api/:path*'],
 };
