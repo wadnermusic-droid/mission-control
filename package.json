@@ -10,7 +10,7 @@
     "db:migrate": "npx prisma migrate dev",
     "db:seed": "npx prisma db seed",
     "db:studio": "npx prisma studio",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate || true"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^16.6.0",
