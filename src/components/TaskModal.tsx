@@ -49,15 +49,27 @@ export const TaskModal: React.FC<TaskModalProps> = ({
 
     setSubmitting(true);
     try {
-      await onSubmit({
-        title: title.trim(),
-        description: description.trim(),
-        dueDate: dueDate || undefined,
-        priority,
-        status,
-        tags: selectedTags,
-        assignee: assignee.trim(),
-      });
+      const data = mode === 'create' 
+        ? ({
+            title: title.trim(),
+            description: description.trim() || undefined,
+            dueDate: dueDate || undefined,
+            priority,
+            status,
+            tags: selectedTags,
+            assignee: assignee.trim() || undefined,
+          } as CreateTaskData)
+        : ({
+            title: title.trim(),
+            description: description.trim() || undefined,
+            dueDate: dueDate || null,
+            priority,
+            status,
+            tags: selectedTags,
+            assignee: assignee.trim() || undefined,
+          } as UpdateTaskData);
+      
+      await onSubmit(data);
       onClose();
     } catch {
       // Error handled
