@@ -13,6 +13,7 @@ import {
 import { KanbanBoard } from '@/components/KanbanBoard';
 import { ToolsPanel } from '@/components/ToolsPanel';
 import { TaskModal } from '@/components/TaskModal';
+import { MobileTaskDetail } from '@/components/MobileTaskDetail';
 import { Header } from '@/components/Header';
 import { FilterBar } from '@/components/FilterBar';
 import toast from 'react-hot-toast';
@@ -248,18 +249,31 @@ export default function HomePage() {
         />
       )}
 
-      {/* Edit Task Modal */}
+      {/* Edit Task Modal - Desktop only */}
       {selectedTask && (
-        <TaskModal
-          mode="edit"
-          task={selectedTask}
-          onSubmit={(data) => handleUpdateTask(selectedTask.id, data)}
-          onClose={() => setSelectedTask(null)}
-          onDelete={() => handleDeleteTask(selectedTask.id)}
-          assignees={assignees}
-          tags={allTags}
-        />
+        <div className="hidden md:block">
+          <TaskModal
+            mode="edit"
+            task={selectedTask}
+            onSubmit={(data) => handleUpdateTask(selectedTask.id, data)}
+            onClose={() => setSelectedTask(null)}
+            onDelete={() => handleDeleteTask(selectedTask.id)}
+            assignees={assignees}
+            tags={allTags}
+          />
+        </div>
       )}
+
+      {/* Mobile Task Detail - Mobile only */}
+      <MobileTaskDetail
+        task={selectedTask}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        tasks={tasks}
+        onTaskUpdate={handleUpdateTask}
+        onTaskDelete={handleDeleteTask}
+        onRefresh={loadTasks}
+      />
     </div>
   );
 }
