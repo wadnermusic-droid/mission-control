@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ============================================================
+// AUTH MODELS
+// ============================================================
+
+model User {
+  id                        String    @id @default(uuid())
+  email                     String    @unique
+  passwordHash              String
+  name                      String
+  role                      String    @default("user") // "user" | "admin"
+  isActive                  Boolean   @default(true)
+  lastLoginAt               DateTime?
+  passwordResetToken        String?   @unique
+  passwordResetExpiresAt    DateTime?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  // Relations
+  sessions      Session[]
+  tasks         Task[]
+  timeEntries   TimeEntry[]
+  notes         Note[]
+}
+
+model Session {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token             String   @unique
+  refreshToken      String   @unique
+  expiresAt         DateTime
+  refreshExpiresAt  DateTime
+  ipAddress         String   @default("")
+  userAgent         String   @default("")
+  createdAt         DateTime @default(now())
+
+  @@index([token])
+  @@index([refreshToken])
+  @@index([userId])
+}
+
+// ============================================================
+// TASK MODELS
+// ============================================================
+
+model Task {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  description String    @default("")
+  dueDate     DateTime?
+  priority    String    @default("medium") // low, medium, high, urgent
+  status      String    @default("inbox") // inbox, assigned, in_progress, done
+  tags        String    @default("[]") // JSON array stored as string for SQLite
+  assignee    String    @default("")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  timeEntries TimeEntry[]
+  notes       Note[]
+
+  @@index([userId])
+}
+
+model TimeEntry {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  duration    Int // Duration in seconds
+  description String   @default("")
+  startedAt   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([taskId])
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([taskId])
+}
+
+model ToolRegistration {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  displayName String
+  description String   @default("")
+  enabled     Boolean  @default(true)
+  config      String   @default("{}") // JSON config stored as string
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

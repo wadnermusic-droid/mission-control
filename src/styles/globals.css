@@ -1,0 +1,235 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --mc-bg: #f8fafc;
+  --mc-surface: #ffffff;
+  --mc-surface-hover: #f1f5f9;
+  --mc-border: #e2e8f0;
+  --mc-text: #0f172a;
+  --mc-text-secondary: #64748b;
+  --mc-primary: #3b82f6;
+  --mc-primary-hover: #2563eb;
+  --mc-accent: #8b5cf6;
+}
+
+.dark {
+  --mc-bg: #0f172a;
+  --mc-surface: #1e293b;
+  --mc-surface-hover: #334155;
+  --mc-border: #334155;
+  --mc-text: #f1f5f9;
+  --mc-text-secondary: #94a3b8;
+  --mc-primary: #3b82f6;
+  --mc-primary-hover: #60a5fa;
+  --mc-accent: #a78bfa;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+body {
+  @apply bg-mc-bg text-mc-text transition-colors duration-200;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideInDown 0.3s ease-out;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-mc-border rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-mc-text-secondary;
+}
+
+.kanban-column {
+  @apply flex flex-col min-h-[200px] rounded-xl p-3 transition-colors duration-200;
+  @apply border border-mc-border;
+  background-color: color-mix(in srgb, var(--mc-surface) 50%, transparent);
+}
+
+.kanban-column-dragging-over {
+  @apply border-mc-primary;
+  background-color: color-mix(in srgb, var(--mc-primary) 5%, transparent);
+}
+
+.task-card {
+  @apply bg-mc-surface border border-mc-border rounded-lg p-3 mb-2 cursor-pointer;
+  @apply hover:shadow-md transition-all duration-150 ease-in-out;
+}
+
+.task-card:hover {
+  border-color: color-mix(in srgb, var(--mc-primary) 40%, var(--mc-border));
+}
+
+.task-card-dragging {
+  @apply shadow-xl border-mc-primary rotate-2 scale-105;
+}
+
+.task-card-selected {
+  @apply border-mc-primary ring-2;
+  ring-color: color-mix(in srgb, var(--mc-primary) 20%, transparent);
+}
+
+.tool-panel {
+  @apply bg-mc-surface border border-mc-border rounded-xl p-4;
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.tool-panel-header {
+  @apply flex items-center justify-between mb-3 pb-2 border-b border-mc-border;
+}
+
+.btn-primary {
+  @apply bg-mc-primary text-white px-4 py-2 rounded-lg font-medium;
+  @apply hover:bg-mc-primary-hover active:scale-[0.98];
+  @apply transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.1);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-secondary {
+  @apply bg-mc-surface text-mc-text px-4 py-2 rounded-lg font-medium;
+  @apply border border-mc-border hover:bg-mc-surface-hover active:scale-[0.98];
+  @apply transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--mc-primary) 30%, var(--mc-border));
+}
+
+.btn-ghost {
+  @apply text-mc-text-secondary px-3 py-1.5 rounded-lg;
+  @apply hover:bg-mc-surface-hover hover:text-mc-text;
+  @apply transition-all duration-150;
+}
+
+.btn-ghost:hover {
+  @apply text-mc-primary;
+}
+
+.btn-danger {
+  @apply bg-red-500 text-white px-4 py-2 rounded-lg font-medium;
+  @apply hover:bg-red-600 active:scale-[0.98];
+  @apply transition-all duration-150;
+  box-shadow: 0 1px 3px rgba(239, 68, 68, 0.1);
+}
+
+.btn-danger:hover {
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.input {
+  @apply w-full px-3 py-2 rounded-lg border border-mc-border;
+  @apply bg-mc-surface text-mc-text placeholder-mc-text-secondary;
+  @apply focus:outline-none focus:ring-2 focus:border-mc-primary;
+  @apply transition-all duration-150;
+}
+
+.input:focus {
+  ring-color: color-mix(in srgb, var(--mc-primary) 30%, transparent);
+}
+
+.input-sm {
+  @apply px-2 py-1.5 text-sm;
+}
+
+.glass {
+  @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-mc-primary to-mc-accent bg-clip-text text-transparent;
+}
+
+/* Skeleton Loaders */
+.skeleton {
+  @apply bg-mc-surface-hover animate-pulse-subtle rounded;
+}
+
+.skeleton-text {
+  @apply skeleton h-4 w-3/4 mb-2;
+}
+
+.skeleton-avatar {
+  @apply skeleton h-12 w-12 rounded-full;
+}
+
+.skeleton-button {
+  @apply skeleton h-10 w-full;
+}
+
+/* Form Animations */
+.form-section {
+  @apply animate-slide-up;
+}
+
+/* Page Transitions */
+.page-enter {
+  @apply animate-fade-in;
+}
