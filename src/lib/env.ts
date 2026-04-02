@@ -99,7 +99,7 @@ export const clientEnv = {
 export function printStartupDiagnostics() {
   console.log('🚀 Mission Control Starting...');
   console.log(`   Environment: ${env.NODE_ENV}`);
-  console.log(`   Database: ${redactSecrets(env.DATABASE_URL)}`);
+  console.log(`   Database: ${env.DATABASE_URL ? redactSecrets(env.DATABASE_URL) : '⚠️ Not configured'}`);
   console.log(`   Rate Limiting: ${env.ENABLE_RATE_LIMITING ? '✅ Enabled' : '⚠️ Disabled'}`);
   console.log(`   CSRF Protection: ${env.ENABLE_CSRF_PROTECTION ? '✅ Enabled' : '⚠️ Disabled'}`);
   console.log('');
