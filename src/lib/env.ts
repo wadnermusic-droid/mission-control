@@ -61,7 +61,11 @@ const clientSchema = z.object({
 
 function validateEnv() {
   const env = process.env;
-  
+
+  if (env.SKIP_ENV_VALIDATION === 'true') {
+    return env as unknown as z.infer<typeof serverSchema> & z.infer<typeof clientSchema>;
+  }
+
   const serverParsed = serverSchema.safeParse(env);
   const clientParsed = clientSchema.safeParse(env);
   
