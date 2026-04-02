@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getUserFromToken } from '@/lib/auth';
 import prisma from '@/lib/db';
 import { createSuccessResponse, createErrorResponse } from '@/lib/api-security';
 
@@ -41,6 +42,18 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const token = request.cookies.get('mc_access_token')?.value;
+
+    if (!token) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+    }
+
+    const user = await getUserFromToken(token);
+
+    if (!user) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+
     const body = await request.json();
 
     if (!body.title || body.title.trim() === '') {
@@ -49,6 +62,7 @@ export async function POST(request: NextRequest) {
 
     const task = await prisma.task.create({
       data: {
+        userId: user.id,
         title: body.title.trim(),
         description: body.description?.trim() || '',
         dueDate: body.dueDate ? new Date(body.dueDate) : null,
