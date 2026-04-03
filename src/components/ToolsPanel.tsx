@@ -35,6 +35,17 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
   const [activeTool, setActiveTool] = useState<string>('time-tracker');
   const [showEditModal, setShowEditModal] = useState(false);
 
+  // Listen for double-click edit event
+  React.useEffect(() => {
+    const handleEditEvent = (e: CustomEvent) => {
+      if (e.detail?.id === selectedTask?.id) {
+        setShowEditModal(true);
+      }
+    };
+    window.addEventListener('openTaskEdit', handleEditEvent as EventListener);
+    return () => window.removeEventListener('openTaskEdit', handleEditEvent as EventListener);
+  }, [selectedTask]);
+
   if (!selectedTask) {
     return null;
   }
@@ -182,17 +193,33 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
                 </select>
               </div>
 
+              <div>
+                <label className="text-xs font-semibold text-mc-text-secondary block mb-1">
+                  Tags (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  id="quick-tags"
+                  defaultValue={selectedTask.tags?.join(', ') || ''}
+                  placeholder="e.g. content-pipeline, filming"
+                  className="input w-full text-sm"
+                />
+              </div>
+
               <div className="flex gap-2 pt-3">
                 <button
                   onClick={async () => {
                     const title = (document.getElementById('quick-title') as HTMLInputElement)?.value || selectedTask.title;
                     const dueDate = (document.getElementById('quick-date') as HTMLInputElement)?.value;
                     const priority = (document.getElementById('quick-priority') as HTMLSelectElement)?.value;
+                    const tagsInput = (document.getElementById('quick-tags') as HTMLInputElement)?.value || '';
+                    const tags = tagsInput ? tagsInput.split(',').map(t => t.trim().toLowerCase()).filter(t => t) : [];
 
                     await onTaskUpdate(selectedTask.id, {
                       title,
                       dueDate: dueDate || null,
                       priority: priority as any,
+                      tags,
                     });
                     setShowEditModal(false);
                   }}

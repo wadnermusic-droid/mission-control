@@ -77,26 +77,38 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                         draggableId={task.id}
                         index={index}
                       >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onSelectTask(task);
-                            }}
-                            className="cursor-pointer"
-                          >
-                            <TaskCard
-                              task={task}
-                              isDragging={snapshot.isDragging}
-                              isSelected={task.id === selectedTaskId}
-                              onClick={() => onSelectTask(task)}
-                              onDelete={() => onDeleteTask(task.id)}
-                            />
-                          </div>
-                        )}
+                        {(provided, snapshot) => {
+                          let clickTimeout: NodeJS.Timeout;
+                          return (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // Single click: open tools
+                                clickTimeout = setTimeout(() => {
+                                  onSelectTask(task);
+                                }, 200);
+                              }}
+                              onDoubleClick={(e) => {
+                                e.stopPropagation();
+                                clearTimeout(clickTimeout);
+                                // Double click: open edit modal via custom event
+                                window.dispatchEvent(new CustomEvent('openTaskEdit', { detail: task }));
+                              }}
+                              className="cursor-pointer"
+                            >
+                              <TaskCard
+                                task={task}
+                                isDragging={snapshot.isDragging}
+                                isSelected={task.id === selectedTaskId}
+                                onClick={() => onSelectTask(task)}
+                                onDelete={() => onDeleteTask(task.id)}
+                              />
+                            </div>
+                          );
+                        }}
                       </Draggable>
                     ))}
                     {provided.placeholder}
