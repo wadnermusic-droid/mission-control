@@ -53,26 +53,26 @@ export const Header: React.FC<HeaderProps> = ({
           {!sidebarOpen && (
             <button
               onClick={onToggleSidebar}
-              className="btn-ghost text-lg md:hidden"
+              className="btn-ghost text-lg md:hidden min-h-10 min-w-10 flex items-center justify-center"
               title="Open tools"
             >
               ☰
             </button>
           )}
           <div>
-            <h1 className="text-xl md:text-2xl font-bold gradient-text">Mission Control</h1>
-            <p className="text-xs md:text-sm text-mc-text-secondary">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold gradient-text">Mission Control</h1>
+            <p className="text-xs text-mc-text-secondary">
               {taskCount} task{taskCount !== 1 ? 's' : ''} total
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 md:gap-3 justify-between md:justify-end flex-wrap">
-          {/* View Mode Buttons */}
-          <div className="flex gap-1 rounded-lg bg-mc-surface p-1">
+          {/* View Mode Buttons - Mobile optimized */}
+          <div className="flex gap-1 rounded-lg bg-mc-surface p-1 sm:gap-2 sm:p-1.5">
             <button
               onClick={() => onViewModeChange('kanban')}
-              className={`px-3 py-1.5 text-sm rounded ${
+              className={`px-2 sm:px-3 py-1.5 text-sm rounded min-w-10 min-h-10 flex items-center justify-center transition ${
                 viewMode === 'kanban' 
                   ? 'bg-mc-primary text-white' 
                   : 'hover:bg-mc-surface-hover'
@@ -83,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
             <button
               onClick={() => onViewModeChange('calendar')}
-              className={`px-3 py-1.5 text-sm rounded ${
+              className={`px-2 sm:px-3 py-1.5 text-sm rounded min-w-10 min-h-10 flex items-center justify-center transition ${
                 viewMode === 'calendar' 
                   ? 'bg-mc-primary text-white' 
                   : 'hover:bg-mc-surface-hover'
@@ -94,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
             <button
               onClick={() => onViewModeChange('analytics')}
-              className={`px-3 py-1.5 text-sm rounded ${
+              className={`px-2 sm:px-3 py-1.5 text-sm rounded min-w-10 min-h-10 flex items-center justify-center transition ${
                 viewMode === 'analytics' 
                   ? 'bg-mc-primary text-white' 
                   : 'hover:bg-mc-surface-hover'
