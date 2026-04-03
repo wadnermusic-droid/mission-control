@@ -82,12 +82,17 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
+                            onClick={() => onSelectTask(task)} // Single click opens tools sidebar
+                            onDoubleClick={(e) => {
+                              e.stopPropagation();
+                              onSelectTask(task); // Double-click also opens (redundant but okay)
+                            }}
                           >
                             <TaskCard
                               task={task}
                               isDragging={snapshot.isDragging}
                               isSelected={task.id === selectedTaskId}
-                              onClick={() => onSelectTask(task)}
+                              onClick={() => {}}
                               onDelete={() => onDeleteTask(task.id)}
                             />
                           </div>

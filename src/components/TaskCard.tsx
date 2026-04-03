@@ -25,10 +25,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({
 
   return (
     <div
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       className={`task-card ${isDragging ? 'task-card-dragging' : ''} ${
         isSelected ? 'task-card-selected' : ''
-      }`}
+      } cursor-pointer hover:shadow-md transition-shadow`}
     >
       {/* Priority & Delete */}
       <div className="flex items-center justify-between mb-2">

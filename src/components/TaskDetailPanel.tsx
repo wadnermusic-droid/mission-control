@@ -32,6 +32,18 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Update form when task changes
+  React.useEffect(() => {
+    if (task) {
+      setTitle(task.title);
+      setDescription(task.description);
+      setDueDate(task.dueDate ? format(new Date(task.dueDate), 'yyyy-MM-dd') : '');
+      setPriority(task.priority as Task['priority']);
+      setSelectedTags(task.tags || []);
+      setEditing(false);
+    }
+  }, [task]);
+
   if (!task) return null;
 
   const handleSave = async () => {
