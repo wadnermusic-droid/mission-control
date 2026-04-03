@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
     const tasks = await prisma.task.findMany({
       where: {
         userId,
+        deletedAt: null, // Only active tasks (exclude deleted)
         dueDate: {
           gte: start,
           lte: end,
