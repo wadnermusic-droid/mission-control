@@ -151,11 +151,11 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
                   </div>
                 )}
 
-                {task.tags.length > 0 && (
-                  <div>
-                    <label className="text-xs font-semibold text-mc-text-secondary block mb-2">
-                      Tags
-                    </label>
+                <div>
+                  <label className="text-xs font-semibold text-mc-text-secondary block mb-2">
+                    Tags
+                  </label>
+                  {task.tags.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {task.tags.map(tag => (
                         <span
@@ -166,8 +166,10 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
                         </span>
                       ))}
                     </div>
-                  </div>
-                )}
+                  ) : (
+                    <p className="text-xs text-mc-text-secondary">No tags yet. Click Edit to add them.</p>
+                  )}
+                </div>
               </>
             ) : (
               <>
@@ -227,39 +229,47 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
                   <label className="text-xs font-semibold text-mc-text-secondary block mb-2">
                     Tags
                   </label>
-                  <div className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          addTag();
-                        }
-                      }}
-                      placeholder="Add tag..."
-                      className="input flex-1 text-sm"
-                    />
-                    <button onClick={addTag} className="btn-secondary text-sm">
-                      Add
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedTags.map(tag => (
-                      <span
-                        key={tag}
-                        className="text-xs bg-mc-primary/20 text-mc-primary rounded-full px-3 py-1 flex items-center gap-2"
-                      >
-                        #{tag}
-                        <button
-                          onClick={() => removeTag(tag)}
-                          className="hover:opacity-70"
-                        >
-                          ✕
-                        </button>
-                      </span>
-                    ))}
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addTag();
+                          }
+                        }}
+                        placeholder="Type tag and press Enter or click Add"
+                        className="input flex-1 text-sm"
+                      />
+                      <button onClick={addTag} className="btn-secondary text-sm px-3">
+                        Add
+                      </button>
+                    </div>
+                    {selectedTags.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedTags.map(tag => (
+                          <span
+                            key={tag}
+                            className="text-xs bg-mc-primary/20 text-mc-primary rounded-full px-3 py-1 flex items-center gap-2 font-medium"
+                          >
+                            #{tag}
+                            <button
+                              onClick={() => removeTag(tag)}
+                              className="hover:opacity-70 transition"
+                              type="button"
+                            >
+                              ✕
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {selectedTags.length === 0 && (
+                      <p className="text-xs text-mc-text-secondary italic">No tags yet</p>
+                    )}
                   </div>
                 </div>
               </>
