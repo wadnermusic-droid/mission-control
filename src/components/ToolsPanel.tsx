@@ -131,20 +131,19 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
       <div className="flex-1 overflow-y-auto p-4">
         {!selectedTask && (
           <div className="text-center py-8 bg-mc-surface-hover rounded-lg border-2 border-dashed border-mc-border p-4">
-            <p className="text-3xl mb-3">👉</p>
-            <p className="text-sm font-semibold text-mc-text mb-2">Select a Task First</p>
-            <p className="text-xs text-mc-text-secondary mb-4">
-              Click on any task in the Kanban board to see its details and use tools
+            <p className="text-5xl mb-3">📋</p>
+            <p className="text-sm font-semibold text-mc-text mb-2">No Task Selected</p>
+            <p className="text-xs text-mc-text-secondary mb-4 leading-relaxed">
+              These tools work on individual tasks. Click any task card in the Kanban board to:
             </p>
-            <button
-              onClick={() => {
-                // Scroll to kanban board (user responsibility)
-                alert('👈 Click on a task in the Kanban board on the left side');
-              }}
-              className="btn-secondary text-xs"
-            >
-              How to Use Tools
-            </button>
+            <ul className="text-xs text-mc-text-secondary text-left bg-mc-surface rounded p-3 mb-4 space-y-1">
+              <li>✏️ Edit task details</li>
+              <li>⏱️ Track time spent</li>
+              <li>📝 Add notes</li>
+              <li>🍅 Use pomodoro timer</li>
+              <li>📊 View analytics</li>
+            </ul>
+            <p className="text-xs font-medium text-mc-primary">👈 Try clicking a task!</p>
           </div>
         )}
 
