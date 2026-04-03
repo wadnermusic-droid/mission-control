@@ -11,8 +11,9 @@ interface HeaderProps {
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
   userName?: string;
-  viewMode?: 'kanban' | 'calendar' | 'analytics';
-  onViewModeChange?: (mode: 'kanban' | 'calendar' | 'analytics') => void;
+  viewMode?: 'kanban' | 'calendar' | 'analytics' | 'trash';
+  onViewModeChange?: (mode: 'kanban' | 'calendar' | 'analytics' | 'trash') => void;
+  onTrash?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -23,6 +24,7 @@ export const Header: React.FC<HeaderProps> = ({
   userName = 'User',
   viewMode = 'kanban',
   onViewModeChange = () => {},
+  onTrash = () => {},
 }) => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
@@ -100,6 +102,17 @@ export const Header: React.FC<HeaderProps> = ({
               title="Analytics dashboard"
             >
               📊
+            </button>
+            <button
+              onClick={() => onViewModeChange('trash')}
+              className={`px-3 py-1.5 text-sm rounded ${
+                viewMode === 'trash' 
+                  ? 'bg-mc-primary text-white' 
+                  : 'hover:bg-mc-surface-hover'
+              }`}
+              title="Trash & recovery"
+            >
+              🗑️
             </button>
           </div>
 

@@ -18,6 +18,7 @@ import { Header } from '@/components/Header';
 import { FilterBar } from '@/components/FilterBar';
 import CalendarPanel from '@/components/panels/calendar-panel';
 import AnalyticsPanel from '@/components/panels/analytics-panel';
+import TrashPanel from '@/components/panels/trash-panel';
 import toast from 'react-hot-toast';
 
 export interface Filters {
@@ -27,7 +28,7 @@ export interface Filters {
   tag: string;
 }
 
-type ViewMode = 'kanban' | 'calendar' | 'analytics';
+type ViewMode = 'kanban' | 'calendar' | 'analytics' | 'trash';
 
 export default function HomePage() {
   const router = useRouter();
@@ -232,6 +233,7 @@ export default function HomePage() {
           userName={userName}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
+          onTrash={() => setViewMode('trash')}
         />
 
         {viewMode === 'kanban' && (
@@ -265,6 +267,14 @@ export default function HomePage() {
           <div className="flex-1 overflow-y-auto p-4">
             <div className="max-w-6xl mx-auto">
               <AnalyticsPanel />
+            </div>
+          </div>
+        )}
+
+        {viewMode === 'trash' && (
+          <div className="flex-1 flex flex-col p-4 min-h-0">
+            <div className="flex-1 flex flex-col min-h-0">
+              <TrashPanel />
             </div>
           </div>
         )}

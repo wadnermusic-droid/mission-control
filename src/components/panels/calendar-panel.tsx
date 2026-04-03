@@ -150,19 +150,31 @@ export default function CalendarPanel({ onCreateTask }: CalendarPanelProps) {
                         task.priority === 'medium' ? 'bg-blue-500 text-white' :
                         'bg-green-500 text-white';
                       return (
-                        <div
+                        <button
                           key={task.id}
-                          className={`p-1 rounded truncate font-semibold leading-tight ${bgColor}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Trigger task selection callback if available
+                            window.dispatchEvent(new CustomEvent('selectTask', { detail: task }));
+                          }}
+                          className={`w-full text-left p-1 rounded truncate font-semibold leading-tight ${bgColor} hover:opacity-80 transition cursor-pointer`}
                           title={task.title}
                         >
                           {task.title.substring(0, 15)}
-                        </div>
+                        </button>
                       );
                     })}
                     {tasks.length > 2 && (
-                      <div className="text-[9px] text-mc-text-secondary font-semibold">
-                        +{tasks.length - 2}
-                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Show all tasks for this date
+                          window.dispatchEvent(new CustomEvent('viewDateTasks', { detail: { date: dateStr, tasks } }));
+                        }}
+                        className="text-[9px] text-mc-text-secondary font-semibold hover:text-mc-text transition cursor-pointer"
+                      >
+                        +{tasks.length - 2} more
+                      </button>
                     )}
                   </div>
                 </div>
