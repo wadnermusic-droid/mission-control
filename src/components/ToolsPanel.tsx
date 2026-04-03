@@ -14,6 +14,7 @@ interface ToolsPanelProps {
   onTaskUpdate: (id: string, data: any) => Promise<void>;
   onTaskDelete: (id: string) => Promise<void>;
   onRefresh: () => void;
+  onOpenEdit?: () => void;
 }
 
 const AVAILABLE_TOOLS = [
@@ -31,20 +32,20 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
   onTaskUpdate,
   onTaskDelete,
   onRefresh,
+  onOpenEdit,
 }) => {
   const [activeTool, setActiveTool] = useState<string>('time-tracker');
-  const [showEditModal, setShowEditModal] = useState(false);
 
   // Listen for double-click edit event
   React.useEffect(() => {
     const handleEditEvent = (e: CustomEvent) => {
       if (e.detail?.id === selectedTask?.id) {
-        setShowEditModal(true);
+        onOpenEdit?.();
       }
     };
     window.addEventListener('openTaskEdit', handleEditEvent as EventListener);
     return () => window.removeEventListener('openTaskEdit', handleEditEvent as EventListener);
-  }, [selectedTask]);
+  }, [selectedTask, onOpenEdit]);
 
   if (!selectedTask) {
     return null;
@@ -133,7 +134,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
           </button>
         ))}
         <button
-          onClick={() => setShowEditModal(true)}
+          onClick={() => onOpenEdit?.()}
           className="px-2 py-1.5 rounded text-sm transition-all duration-150 whitespace-nowrap flex-shrink-0 hover:bg-mc-surface text-mc-text-secondary hover:text-mc-text"
           title="Edit task details"
         >
@@ -146,98 +147,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
         {renderActiveTool()}
       </div>
 
-      {/* Edit Modal (within the sidebar) */}
-      {showEditModal && selectedTask && (
-        <div className="absolute inset-0 z-50 bg-black/50 rounded-lg flex items-center justify-center p-4">
-          <div className="bg-mc-surface rounded-lg p-6 max-w-sm w-full max-h-96 overflow-y-auto border border-mc-border">
-            <h3 className="font-bold text-lg mb-4">Quick Edit</h3>
-            
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs font-semibold text-mc-text-secondary block mb-1">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  id="quick-title"
-                  defaultValue={selectedTask.title}
-                  className="input w-full text-sm"
-                />
-              </div>
 
-              <div>
-                <label className="text-xs font-semibold text-mc-text-secondary block mb-1">
-                  Due Date
-                </label>
-                <input
-                  type="date"
-                  id="quick-date"
-                  defaultValue={selectedTask.dueDate ? new Date(selectedTask.dueDate).toISOString().split('T')[0] : ''}
-                  className="input w-full text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-mc-text-secondary block mb-1">
-                  Priority
-                </label>
-                <select
-                  id="quick-priority"
-                  defaultValue={selectedTask.priority}
-                  className="input w-full text-sm"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                  <option value="urgent">Urgent</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold text-mc-text-secondary block mb-1">
-                  Tags (comma-separated)
-                </label>
-                <input
-                  type="text"
-                  id="quick-tags"
-                  defaultValue={selectedTask.tags?.join(', ') || ''}
-                  placeholder="e.g. content-pipeline, filming"
-                  className="input w-full text-sm"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-3">
-                <button
-                  onClick={async () => {
-                    const title = (document.getElementById('quick-title') as HTMLInputElement)?.value || selectedTask.title;
-                    const dueDate = (document.getElementById('quick-date') as HTMLInputElement)?.value;
-                    const priority = (document.getElementById('quick-priority') as HTMLSelectElement)?.value;
-                    const tagsInput = (document.getElementById('quick-tags') as HTMLInputElement)?.value || '';
-                    const tags = tagsInput ? tagsInput.split(',').map(t => t.trim().toLowerCase()).filter(t => t) : [];
-
-                    await onTaskUpdate(selectedTask.id, {
-                      title,
-                      dueDate: dueDate || null,
-                      priority: priority as any,
-                      tags,
-                    });
-                    setShowEditModal(false);
-                  }}
-                  className="btn-primary text-sm flex-1"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setShowEditModal(false)}
-                  className="btn-secondary text-sm flex-1"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </aside>
   );
 };

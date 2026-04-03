@@ -40,6 +40,7 @@ export default function HomePage() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [userName, setUserName] = useState('User');
   const [viewMode, setViewMode] = useState<ViewMode>('kanban');
+  const [showEditModal, setShowEditModal] = useState(false);
 
   // Check authentication on mount
   useEffect(() => {
@@ -203,6 +204,7 @@ export default function HomePage() {
           onTaskUpdate={handleUpdateTask}
           onTaskDelete={handleDeleteTask}
           onRefresh={loadTasks}
+          onOpenEdit={() => setShowEditModal(true)}
         />
       </div>
 
@@ -222,6 +224,7 @@ export default function HomePage() {
               onTaskUpdate={handleUpdateTask}
               onTaskDelete={handleDeleteTask}
               onRefresh={loadTasks}
+              onOpenEdit={() => setShowEditModal(true)}
             />
           </div>
         </div>
@@ -298,7 +301,14 @@ export default function HomePage() {
       {/* Edit Task Modal - Desktop only - Only show if explicitly opened */}
       {/* (Removed auto-open on selection to avoid blocking the sidebar) */}
 
-      {/* Task Detail Panel - Desktop edit view (not used, edit via modal in sidebar) */}
+      {/* Task Detail Panel - Desktop edit view */}
+      <TaskDetailPanel
+        task={selectedTask}
+        isOpen={!!selectedTask && viewMode === 'kanban' && showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onUpdate={handleUpdateTask}
+        onDelete={handleDeleteTask}
+      />
 
       {/* Mobile Task Detail - Mobile only */}
       <MobileTaskDetail
