@@ -23,7 +23,11 @@ const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-export default function CalendarPanel() {
+interface CalendarPanelProps {
+  onCreateTask?: () => void;
+}
+
+export default function CalendarPanel({ onCreateTask }: CalendarPanelProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [tasksByDate, setTasksByDate] = useState<Record<string, CalendarTask[]>>({});
   const [loading, setLoading] = useState(true);
@@ -75,10 +79,18 @@ export default function CalendarPanel() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between mb-4">
+    <div className="h-full flex flex-col space-y-4">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-mc-text">📅 Calendar</h1>
         <div className="flex gap-2 items-center">
+          {onCreateTask && (
+            <button
+              onClick={onCreateTask}
+              className="btn-primary text-sm px-3 py-1.5"
+            >
+              + New Task
+            </button>
+          )}
           <button
             onClick={() => setCurrentDate(new Date(year, month - 1))}
             className="p-2 hover:bg-mc-surface-hover rounded text-xl transition"
@@ -98,7 +110,7 @@ export default function CalendarPanel() {
       {loading ? (
         <div className="text-center py-12">Loading...</div>
       ) : (
-        <div className="border border-mc-border rounded-lg overflow-hidden bg-mc-surface">
+        <div className="border border-mc-border rounded-lg overflow-hidden bg-mc-surface flex-1 flex flex-col">
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-0 bg-mc-primary text-white">
             {DAY_NAMES.map(day => (
@@ -109,7 +121,7 @@ export default function CalendarPanel() {
           </div>
 
           {/* Calendar grid */}
-          <div className="grid grid-cols-7 gap-0 border-t border-mc-border">
+          <div className="grid grid-cols-7 gap-0 border-t border-mc-border flex-1 overflow-auto">
             {days.map((date, idx) => {
               const dateStr = date.toISOString().split('T')[0];
               const tasks = tasksByDate[dateStr] || [];
@@ -119,7 +131,7 @@ export default function CalendarPanel() {
               return (
                 <div
                   key={idx}
-                  className={`min-h-[100px] p-2 border-r border-b border-mc-border ${
+                  className={`h-20 p-2 border-r border-b border-mc-border overflow-hidden ${
                     isCurrentMonth 
                       ? isToday 
                         ? 'bg-mc-primary/5' 
