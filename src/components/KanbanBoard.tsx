@@ -82,6 +82,11 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectTask(task);
+                            }}
+                            className="cursor-pointer"
                           >
                             <TaskCard
                               task={task}
