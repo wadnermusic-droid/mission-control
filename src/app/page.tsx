@@ -277,20 +277,8 @@ export default function HomePage() {
         />
       )}
 
-      {/* Edit Task Modal - Desktop only */}
-      {selectedTask && (
-        <div className="hidden md:block">
-          <TaskModal
-            mode="edit"
-            task={selectedTask}
-            onSubmit={(data) => handleUpdateTask(selectedTask.id, data)}
-            onClose={() => setSelectedTask(null)}
-            onDelete={() => handleDeleteTask(selectedTask.id)}
-            assignees={assignees}
-            tags={allTags}
-          />
-        </div>
-      )}
+      {/* Edit Task Modal - Desktop only - Only show if explicitly opened */}
+      {/* (Removed auto-open on selection to avoid blocking the sidebar) */}
 
       {/* Mobile Task Detail - Mobile only */}
       <MobileTaskDetail
