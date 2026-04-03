@@ -163,6 +163,11 @@ export default function HomePage() {
     [loadTasks]
   );
 
+  const handleSelectTask = useCallback((task: Task) => {
+    setSelectedTask(task);
+    setSidebarOpen(true); // Auto-open sidebar when task is selected
+  }, []);
+
   const assignees = useMemo(() => getUniqueAssignees(tasks), [tasks]);
   const allTags = useMemo(() => getUniqueTags(tasks), [tasks]);
 
@@ -241,7 +246,7 @@ export default function HomePage() {
             <KanbanBoard
               tasks={filteredTasks}
               onMoveTask={handleMoveTask}
-              onSelectTask={setSelectedTask}
+              onSelectTask={handleSelectTask}
               onDeleteTask={handleDeleteTask}
               selectedTaskId={selectedTask?.id || null}
             />
