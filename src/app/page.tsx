@@ -254,14 +254,18 @@ export default function HomePage() {
         )}
 
         {viewMode === 'calendar' && (
-          <div className="flex-1 overflow-y-auto">
-            <CalendarPanel />
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="max-w-6xl mx-auto">
+              <CalendarPanel />
+            </div>
           </div>
         )}
 
         {viewMode === 'analytics' && (
-          <div className="flex-1 overflow-y-auto">
-            <AnalyticsPanel />
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="max-w-6xl mx-auto">
+              <AnalyticsPanel />
+            </div>
           </div>
         )}
       </div>

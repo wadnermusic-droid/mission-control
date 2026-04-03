@@ -32,7 +32,11 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
 }) => {
   const [activeTool, setActiveTool] = useState<string>('time-tracker');
 
-  if (!isOpen || !selectedTask) {
+  if (!selectedTask) {
+    return null;
+  }
+
+  if (!isOpen) {
     return null;
   }
 
