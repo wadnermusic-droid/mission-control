@@ -76,19 +76,19 @@ export default function CalendarPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Calendar</h1>
-        <div className="flex gap-2">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold text-mc-text">📅 Calendar</h1>
+        <div className="flex gap-2 items-center">
           <button
             onClick={() => setCurrentDate(new Date(year, month - 1))}
-            className="p-2 hover:bg-secondary rounded text-xl"
+            className="p-2 hover:bg-mc-surface-hover rounded text-xl transition"
           >
             ←
           </button>
-          <span className="px-4 py-2 font-semibold">{MONTH_NAMES[month]} {year}</span>
+          <span className="px-4 py-2 font-semibold text-mc-text min-w-[150px] text-center">{MONTH_NAMES[month]} {year}</span>
           <button
             onClick={() => setCurrentDate(new Date(year, month + 1))}
-            className="p-2 hover:bg-secondary rounded text-xl"
+            className="p-2 hover:bg-mc-surface-hover rounded text-xl transition"
           >
             →
           </button>
@@ -98,16 +98,18 @@ export default function CalendarPanel() {
       {loading ? (
         <div className="text-center py-12">Loading...</div>
       ) : (
-        <div className="border border-mc-border rounded-lg overflow-hidden">
-          <div className="grid grid-cols-7 bg-mc-surface-hover">
+        <div className="border border-mc-border rounded-lg overflow-hidden bg-mc-surface">
+          {/* Day headers */}
+          <div className="grid grid-cols-7 gap-0 bg-mc-primary text-white">
             {DAY_NAMES.map(day => (
-              <div key={day} className="p-4 text-center font-semibold text-sm text-mc-text">
+              <div key={day} className="p-3 text-center font-semibold text-sm border-r border-mc-primary last:border-r-0">
                 {day}
               </div>
             ))}
           </div>
 
-          <div className="grid grid-cols-7">
+          {/* Calendar grid */}
+          <div className="grid grid-cols-7 gap-0 border-t border-mc-border">
             {days.map((date, idx) => {
               const dateStr = date.toISOString().split('T')[0];
               const tasks = tasksByDate[dateStr] || [];
@@ -117,37 +119,37 @@ export default function CalendarPanel() {
               return (
                 <div
                   key={idx}
-                  className={`min-h-[120px] p-2 border border-mc-border ${
+                  className={`min-h-[100px] p-2 border-r border-b border-mc-border ${
                     isCurrentMonth 
                       ? isToday 
-                        ? 'bg-mc-primary/10' 
+                        ? 'bg-mc-primary/5' 
                         : 'bg-mc-surface' 
-                      : 'bg-mc-surface-hover opacity-50'
-                  }`}
+                      : 'bg-mc-surface-hover'
+                  } last:border-r-0`}
                 >
-                  <div className={`text-sm font-semibold mb-1 ${isToday ? 'text-mc-primary' : 'text-mc-text'}`}>
+                  <div className={`text-xs font-bold mb-1 ${isToday ? 'text-mc-primary text-sm' : 'text-mc-text-secondary'}`}>
                     {date.getDate()}
                   </div>
-                  <div className="space-y-1">
-                    {tasks.slice(0, 3).map(task => {
+                  <div className="space-y-0.5 text-[10px]">
+                    {tasks.slice(0, 2).map(task => {
                       const bgColor = 
-                        task.priority === 'urgent' ? 'bg-red-600 text-white' :
-                        task.priority === 'high' ? 'bg-orange-600 text-white' :
-                        task.priority === 'medium' ? 'bg-yellow-600 text-white' :
-                        'bg-green-600 text-white';
+                        task.priority === 'urgent' ? 'bg-red-500 text-white' :
+                        task.priority === 'high' ? 'bg-orange-500 text-white' :
+                        task.priority === 'medium' ? 'bg-blue-500 text-white' :
+                        'bg-green-500 text-white';
                       return (
                         <div
                           key={task.id}
-                          className={`text-xs p-1.5 rounded truncate font-semibold ${bgColor}`}
+                          className={`p-1 rounded truncate font-semibold leading-tight ${bgColor}`}
                           title={task.title}
                         >
-                          {task.title}
+                          {task.title.substring(0, 15)}
                         </div>
                       );
                     })}
-                    {tasks.length > 3 && (
-                      <div className="text-xs text-mc-text-secondary font-semibold">
-                        +{tasks.length - 3} more
+                    {tasks.length > 2 && (
+                      <div className="text-[9px] text-mc-text-secondary font-semibold">
+                        +{tasks.length - 2}
                       </div>
                     )}
                   </div>
