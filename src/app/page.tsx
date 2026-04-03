@@ -16,6 +16,8 @@ import { TaskModal } from '@/components/TaskModal';
 import { MobileTaskDetail } from '@/components/MobileTaskDetail';
 import { Header } from '@/components/Header';
 import { FilterBar } from '@/components/FilterBar';
+import CalendarPanel from '@/components/panels/calendar-panel';
+import AnalyticsPanel from '@/components/panels/analytics-panel';
 import toast from 'react-hot-toast';
 
 export interface Filters {
@@ -25,6 +27,8 @@ export interface Filters {
   tag: string;
 }
 
+type ViewMode = 'kanban' | 'calendar' | 'analytics';
+
 export default function HomePage() {
   const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -33,6 +37,7 @@ export default function HomePage() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [userName, setUserName] = useState('User');
+  const [viewMode, setViewMode] = useState<ViewMode>('kanban');
 
   // Check authentication on mount
   useEffect(() => {
@@ -220,22 +225,40 @@ export default function HomePage() {
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           userName={userName}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
 
-        <FilterBar
-          filters={filters}
-          onFiltersChange={setFilters}
-          assignees={assignees}
-          tags={allTags}
-        />
+        {viewMode === 'kanban' && (
+          <>
+            <FilterBar
+              filters={filters}
+              onFiltersChange={setFilters}
+              assignees={assignees}
+              tags={allTags}
+            />
 
-        <KanbanBoard
-          tasks={filteredTasks}
-          onMoveTask={handleMoveTask}
-          onSelectTask={setSelectedTask}
-          onDeleteTask={handleDeleteTask}
-          selectedTaskId={selectedTask?.id || null}
-        />
+            <KanbanBoard
+              tasks={filteredTasks}
+              onMoveTask={handleMoveTask}
+              onSelectTask={setSelectedTask}
+              onDeleteTask={handleDeleteTask}
+              selectedTaskId={selectedTask?.id || null}
+            />
+          </>
+        )}
+
+        {viewMode === 'calendar' && (
+          <div className="flex-1 overflow-y-auto">
+            <CalendarPanel />
+          </div>
+        )}
+
+        {viewMode === 'analytics' && (
+          <div className="flex-1 overflow-y-auto">
+            <AnalyticsPanel />
+          </div>
+        )}
       </div>
 
       {/* Create Task Modal */}

@@ -11,6 +11,8 @@ interface HeaderProps {
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
   userName?: string;
+  viewMode?: 'kanban' | 'calendar' | 'analytics';
+  onViewModeChange?: (mode: 'kanban' | 'calendar' | 'analytics') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +21,8 @@ export const Header: React.FC<HeaderProps> = ({
   sidebarOpen,
   onToggleSidebar,
   userName = 'User',
+  viewMode = 'kanban',
+  onViewModeChange = () => {},
 }) => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
@@ -61,7 +65,44 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 md:gap-3 justify-between md:justify-end">
+        <div className="flex items-center gap-2 md:gap-3 justify-between md:justify-end flex-wrap">
+          {/* View Mode Buttons */}
+          <div className="flex gap-1 rounded-lg bg-mc-surface p-1">
+            <button
+              onClick={() => onViewModeChange('kanban')}
+              className={`px-3 py-1.5 text-sm rounded ${
+                viewMode === 'kanban' 
+                  ? 'bg-mc-primary text-white' 
+                  : 'hover:bg-mc-surface-hover'
+              }`}
+              title="Kanban board"
+            >
+              📋
+            </button>
+            <button
+              onClick={() => onViewModeChange('calendar')}
+              className={`px-3 py-1.5 text-sm rounded ${
+                viewMode === 'calendar' 
+                  ? 'bg-mc-primary text-white' 
+                  : 'hover:bg-mc-surface-hover'
+              }`}
+              title="Calendar view"
+            >
+              📅
+            </button>
+            <button
+              onClick={() => onViewModeChange('analytics')}
+              className={`px-3 py-1.5 text-sm rounded ${
+                viewMode === 'analytics' 
+                  ? 'bg-mc-primary text-white' 
+                  : 'hover:bg-mc-surface-hover'
+              }`}
+              title="Analytics dashboard"
+            >
+              📊
+            </button>
+          </div>
+
           <button
             onClick={onCreateTask}
             className="btn-primary flex items-center gap-1 text-sm px-3 py-1.5 md:px-4 md:py-2"
@@ -72,10 +113,9 @@ export const Header: React.FC<HeaderProps> = ({
 
           <button
             onClick={onToggleSidebar}
-            className="btn-secondary text-sm px-3 py-1.5 md:px-4 md:py-2 flex items-center gap-2"
+            className="btn-secondary text-sm px-3 py-1.5 md:px-4 md:py-2 flex items-center gap-2 hidden md:flex"
           >
-            <span className="md:hidden">{sidebarOpen ? 'Tools' : 'Tools'}</span>
-            <span className="hidden md:inline">{sidebarOpen ? 'Hide Tools' : 'Show Tools'}</span>
+            <span>{sidebarOpen ? 'Hide Tools' : 'Show Tools'}</span>
           </button>
 
           {mounted && (
