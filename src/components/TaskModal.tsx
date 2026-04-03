@@ -34,6 +34,7 @@ export const TaskModal: React.FC<TaskModalProps> = ({
   const [tagInput, setTagInput] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>(task?.tags || []);
   const [submitting, setSubmitting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -269,23 +270,51 @@ export const TaskModal: React.FC<TaskModalProps> = ({
           {/* Footer */}
           <div className="flex items-center justify-between p-5 border-t border-mc-border">
             <div>
-              {mode === 'edit' && onDelete && (
-                <button type="button" onClick={onDelete} className="btn-danger text-sm">
+              {mode === 'edit' && onDelete && !showDeleteConfirm && (
+                <button 
+                  type="button" 
+                  onClick={() => setShowDeleteConfirm(true)} 
+                  className="text-sm text-red-600 hover:text-red-700 opacity-70 hover:opacity-100 transition"
+                >
                   🗑️ Delete
                 </button>
               )}
             </div>
             <div className="flex gap-2">
-              <button type="button" onClick={onClose} className="btn-secondary">
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={!title.trim() || submitting}
-                className="btn-primary"
-              >
-                {submitting ? 'Saving...' : mode === 'create' ? 'Create Task' : 'Save Changes'}
-              </button>
+              {showDeleteConfirm ? (
+                <>
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setShowDeleteConfirm(false);
+                      onDelete?.();
+                    }} 
+                    className="btn-danger text-sm"
+                  >
+                    Confirm Delete
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setShowDeleteConfirm(false)} 
+                    className="btn-secondary text-sm"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button type="button" onClick={onClose} className="btn-secondary">
+                    Close
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!title.trim() || submitting}
+                    className="btn-primary"
+                  >
+                    {submitting ? 'Saving...' : mode === 'create' ? 'Create Task' : 'Save Changes'}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </form>

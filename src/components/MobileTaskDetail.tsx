@@ -32,6 +32,7 @@ export const MobileTaskDetail: React.FC<MobileTaskDetailProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTask, setEditedTask] = useState<Task | null>(task);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   React.useEffect(() => {
     setEditedTask(task);
@@ -58,10 +59,10 @@ export const MobileTaskDetail: React.FC<MobileTaskDetailProps> = ({
   };
 
   const handleDelete = async () => {
-    if (!confirm('Delete this task?')) return;
     try {
       await onTaskDelete(task.id);
       toast.success('Task deleted');
+      setShowDeleteConfirm(false);
       onClose();
     } catch {
       toast.error('Failed to delete task');
@@ -220,18 +221,40 @@ export const MobileTaskDetail: React.FC<MobileTaskDetailProps> = ({
 
           {/* Footer Actions */}
           <div className="border-t border-mc-border p-4 space-y-2 sticky bottom-0 bg-mc-surface">
-            <button
-              onClick={handleDelete}
-              className="w-full btn-danger text-sm py-2"
-            >
-              🗑️ Delete Task
-            </button>
-            <button
-              onClick={onClose}
-              className="w-full btn-secondary text-sm py-2"
-            >
-              Close
-            </button>
+            {!showDeleteConfirm ? (
+              <>
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="w-full text-sm py-2 text-red-600 hover:bg-red-50 rounded transition opacity-70 hover:opacity-100"
+                >
+                  🗑️ Delete Task
+                </button>
+                <button
+                  onClick={onClose}
+                  className="w-full btn-secondary text-sm py-2"
+                >
+                  Close
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800 mb-2">
+                  ⚠️ This will permanently delete the task. This cannot be undone.
+                </div>
+                <button
+                  onClick={handleDelete}
+                  className="w-full btn-danger text-sm py-2"
+                >
+                  Yes, Delete Task
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="w-full btn-secondary text-sm py-2"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
