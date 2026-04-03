@@ -70,7 +70,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             onChange={(e) => updateFilter('tag', e.target.value)}
             className="input input-sm w-auto min-w-[120px]"
           >
-            <option value="">Tags</option>
+            <option value="">All Tags</option>
             {tags.map((t) => (
               <option key={t} value={t}>
                 {t}
