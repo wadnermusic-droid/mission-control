@@ -308,6 +308,7 @@ export default function HomePage() {
         onClose={() => setShowEditModal(false)}
         onUpdate={handleUpdateTask}
         onDelete={handleDeleteTask}
+        allTags={Array.from(new Set(tasks.flatMap(t => t.tags || [])))}
       />
 
       {/* Mobile Task Detail - Mobile only */}

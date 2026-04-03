@@ -11,6 +11,7 @@ interface TaskDetailPanelProps {
   onClose: () => void;
   onUpdate: (id: string, data: UpdateTaskData) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  allTags?: string[];
 }
 
 export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
@@ -19,6 +20,7 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
   onClose,
   onUpdate,
   onDelete,
+  allTags = [],
 }) => {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(task?.title || '');
@@ -31,6 +33,7 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
   const [selectedTags, setSelectedTags] = useState<string[]>(task?.tags || []);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
 
   // Update form when task changes
   React.useEffect(() => {
@@ -241,7 +244,29 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
                   <label className="text-xs font-semibold text-mc-text-secondary block mb-2">
                     Tags
                   </label>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
+                    {/* Quick Select from Existing Tags */}
+                    {allTags.length > 0 && (
+                      <div className="bg-mc-surface-hover rounded p-2 space-y-2">
+                        <p className="text-xs font-semibold text-mc-text-secondary">Quick Select:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {allTags.filter(t => !selectedTags.includes(t)).map(tag => (
+                            <button
+                              key={tag}
+                              onClick={() => {
+                                setSelectedTags([...selectedTags, tag]);
+                              }}
+                              className="text-xs bg-mc-surface border border-mc-border rounded px-2 py-1 hover:bg-mc-primary/10 transition"
+                              type="button"
+                            >
+                              + {tag}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Add Custom Tag */}
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -253,13 +278,15 @@ export const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({
                             addTag();
                           }
                         }}
-                        placeholder="Type tag and press Enter or click Add"
+                        placeholder="Type custom tag..."
                         className="input flex-1 text-sm"
                       />
                       <button onClick={addTag} className="btn-secondary text-sm px-3">
                         Add
                       </button>
                     </div>
+
+                    {/* Selected Tags */}
                     {selectedTags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {selectedTags.map(tag => (
