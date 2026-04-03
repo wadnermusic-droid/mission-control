@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface CalendarTask {
   id: string;
@@ -31,6 +31,8 @@ export default function CalendarPanel({ onCreateTask }: CalendarPanelProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [tasksByDate, setTasksByDate] = useState<Record<string, CalendarTask[]>>({});
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedDateTasks, setSelectedDateTasks] = useState<CalendarTask[]>([]);
 
   useEffect(() => {
     const fetchTasks = async () => {

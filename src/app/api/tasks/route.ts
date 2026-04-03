@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const tasks = await prisma.task.findMany({
       where: {
         ...where,
-        deletedAt: null, // Only active tasks
+        deletedAt: null, // Only active tasks (NOT deleted)
       },
       orderBy: [{ priority: 'asc' }, { createdAt: 'desc' }],
     });

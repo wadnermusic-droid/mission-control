@@ -45,7 +45,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             onChange={(e) => updateFilter('priority', e.target.value)}
             className="input input-sm w-auto min-w-[120px]"
           >
-            <option value="">Priority</option>
+            <option value="">All Priorities</option>
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
@@ -141,7 +141,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                   onChange={(e) => updateFilter('priority', e.target.value)}
                   className="input input-sm"
                 >
-                  <option value="">Any</option>
+                  <option value="">All Priorities</option>
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
                   <option value="high">High</option>
