@@ -98,10 +98,10 @@ export default function CalendarPanel() {
       {loading ? (
         <div className="text-center py-12">Loading...</div>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <div className="grid grid-cols-7 bg-secondary">
+        <div className="border border-mc-border rounded-lg overflow-hidden">
+          <div className="grid grid-cols-7 bg-mc-surface-hover">
             {DAY_NAMES.map(day => (
-              <div key={day} className="p-4 text-center font-semibold text-sm">
+              <div key={day} className="p-4 text-center font-semibold text-sm text-mc-text">
                 {day}
               </div>
             ))}
@@ -112,29 +112,41 @@ export default function CalendarPanel() {
               const dateStr = date.toISOString().split('T')[0];
               const tasks = tasksByDate[dateStr] || [];
               const isCurrentMonth = date.getMonth() === month;
+              const isToday = dateStr === new Date().toISOString().split('T')[0];
 
               return (
                 <div
                   key={idx}
-                  className={`min-h-[120px] p-2 border ${
-                    isCurrentMonth ? 'bg-white' : 'bg-gray-50'
+                  className={`min-h-[120px] p-2 border border-mc-border ${
+                    isCurrentMonth 
+                      ? isToday 
+                        ? 'bg-mc-primary/10' 
+                        : 'bg-mc-surface' 
+                      : 'bg-mc-surface-hover opacity-50'
                   }`}
                 >
-                  <div className={`text-sm font-semibold mb-1 ${isCurrentMonth ? '' : 'opacity-50'}`}>
+                  <div className={`text-sm font-semibold mb-1 ${isToday ? 'text-mc-primary' : 'text-mc-text'}`}>
                     {date.getDate()}
                   </div>
                   <div className="space-y-1">
-                    {tasks.slice(0, 3).map(task => (
-                      <div
-                        key={task.id}
-                        className={`text-xs p-1 rounded truncate ${PRIORITY_COLORS[task.priority] || ''}`}
-                        title={task.title}
-                      >
-                        {task.title}
-                      </div>
-                    ))}
+                    {tasks.slice(0, 3).map(task => {
+                      const bgColor = 
+                        task.priority === 'urgent' ? 'bg-red-600 text-white' :
+                        task.priority === 'high' ? 'bg-orange-600 text-white' :
+                        task.priority === 'medium' ? 'bg-yellow-600 text-white' :
+                        'bg-green-600 text-white';
+                      return (
+                        <div
+                          key={task.id}
+                          className={`text-xs p-1.5 rounded truncate font-semibold ${bgColor}`}
+                          title={task.title}
+                        >
+                          {task.title}
+                        </div>
+                      );
+                    })}
                     {tasks.length > 3 && (
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-mc-text-secondary font-semibold">
                         +{tasks.length - 3} more
                       </div>
                     )}

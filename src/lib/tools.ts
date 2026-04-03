@@ -61,10 +61,10 @@ export const KANBAN_COLUMNS: KanbanColumn[] = [
 ];
 
 export const PRIORITY_CONFIG = {
-  low: { label: 'Low', color: 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300', icon: '○' },
-  medium: { label: 'Medium', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300', icon: '◑' },
-  high: { label: 'High', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300', icon: '●' },
-  urgent: { label: 'Urgent', color: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300', icon: '🔴' },
+  low: { label: 'Low', color: 'bg-green-600 text-white font-semibold', icon: '○' },
+  medium: { label: 'Medium', color: 'bg-blue-600 text-white font-semibold', icon: '◑' },
+  high: { label: 'High', color: 'bg-orange-600 text-white font-semibold', icon: '●' },
+  urgent: { label: 'Urgent', color: 'bg-red-600 text-white font-semibold', icon: '🔴' },
 } as const;
 
 export const TOOL_REGISTRY: Record<string, ToolDefinition> = {

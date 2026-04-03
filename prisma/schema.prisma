@@ -68,12 +68,14 @@ model Task {
   assignee    String    @default("")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime? // Soft delete timestamp (null = active, set = archived/deleted)
   timeEntries TimeEntry[]
   notes       Note[]
   pomodoroSessions PomodoroSession[]
   comments    TaskComment[]
 
   @@index([userId])
+  @@index([deletedAt])
 }
 
 model TimeEntry {

@@ -68,15 +68,17 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       where: { id: params.id },
     });
 
-    if (!existing) {
+    if (!existing || existing.deletedAt) {
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    await prisma.task.delete({
+    // Soft delete: set deletedAt timestamp instead of hard deleting
+    const task = await prisma.task.update({
       where: { id: params.id },
+      data: { deletedAt: new Date() },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, task });
   } catch (error) {
     console.error(`DELETE /api/tasks/${params.id} error:`, error);
     return NextResponse.json({ error: 'Failed to delete task' }, { status: 500 });
