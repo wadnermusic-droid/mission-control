@@ -201,6 +201,7 @@ export default function HomePage() {
           tasks={tasks}
           selectedTask={selectedTask}
           onTaskUpdate={handleUpdateTask}
+          onTaskDelete={handleDeleteTask}
           onRefresh={loadTasks}
         />
       </div>
@@ -219,6 +220,7 @@ export default function HomePage() {
               tasks={tasks}
               selectedTask={selectedTask}
               onTaskUpdate={handleUpdateTask}
+              onTaskDelete={handleDeleteTask}
               onRefresh={loadTasks}
             />
           </div>
@@ -296,14 +298,7 @@ export default function HomePage() {
       {/* Edit Task Modal - Desktop only - Only show if explicitly opened */}
       {/* (Removed auto-open on selection to avoid blocking the sidebar) */}
 
-      {/* Task Detail Panel - Desktop edit view */}
-      <TaskDetailPanel
-        task={selectedTask}
-        isOpen={!!selectedTask && viewMode === 'kanban'}
-        onClose={() => setSelectedTask(null)}
-        onUpdate={handleUpdateTask}
-        onDelete={handleDeleteTask}
-      />
+      {/* Task Detail Panel - Desktop edit view (not used, edit via modal in sidebar) */}
 
       {/* Mobile Task Detail - Mobile only */}
       <MobileTaskDetail

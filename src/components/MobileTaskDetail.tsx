@@ -214,6 +214,7 @@ export const MobileTaskDetail: React.FC<MobileTaskDetailProps> = ({
                 tasks={tasks}
                 selectedTask={task}
                 onTaskUpdate={onTaskUpdate}
+                onTaskDelete={onTaskDelete}
                 onRefresh={onRefresh}
               />
             </div>

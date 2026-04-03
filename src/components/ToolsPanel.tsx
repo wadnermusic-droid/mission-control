@@ -12,6 +12,7 @@ interface ToolsPanelProps {
   tasks: any[];
   selectedTask: any | null;
   onTaskUpdate: (id: string, data: any) => Promise<void>;
+  onTaskDelete: (id: string) => Promise<void>;
   onRefresh: () => void;
 }
 
@@ -28,9 +29,11 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
   tasks,
   selectedTask,
   onTaskUpdate,
+  onTaskDelete,
   onRefresh,
 }) => {
   const [activeTool, setActiveTool] = useState<string>('time-tracker');
+  const [showEditModal, setShowEditModal] = useState(false);
 
   if (!selectedTask) {
     return null;
@@ -102,7 +105,7 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
         </button>
       </div>
 
-      {/* Tool Tabs */}
+      {/* Tool Tabs + Edit Button */}
       <div className="flex gap-1 p-2 border-b border-mc-border bg-mc-surface-hover overflow-x-auto">
         {AVAILABLE_TOOLS.map((tool) => (
           <button
@@ -118,12 +121,96 @@ export const ToolsPanel: React.FC<ToolsPanelProps> = ({
             {tool.name}
           </button>
         ))}
+        <button
+          onClick={() => setShowEditModal(true)}
+          className="px-2 py-1.5 rounded text-sm transition-all duration-150 whitespace-nowrap flex-shrink-0 hover:bg-mc-surface text-mc-text-secondary hover:text-mc-text"
+          title="Edit task details"
+        >
+          ✏️ Edit
+        </button>
       </div>
 
       {/* Active Tool Content */}
       <div className="flex-1 overflow-y-auto p-4">
         {renderActiveTool()}
       </div>
+
+      {/* Edit Modal (within the sidebar) */}
+      {showEditModal && selectedTask && (
+        <div className="absolute inset-0 z-50 bg-black/50 rounded-lg flex items-center justify-center p-4">
+          <div className="bg-mc-surface rounded-lg p-6 max-w-sm w-full max-h-96 overflow-y-auto border border-mc-border">
+            <h3 className="font-bold text-lg mb-4">Quick Edit</h3>
+            
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-semibold text-mc-text-secondary block mb-1">
+                  Title
+                </label>
+                <input
+                  type="text"
+                  id="quick-title"
+                  defaultValue={selectedTask.title}
+                  className="input w-full text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-mc-text-secondary block mb-1">
+                  Due Date
+                </label>
+                <input
+                  type="date"
+                  id="quick-date"
+                  defaultValue={selectedTask.dueDate ? new Date(selectedTask.dueDate).toISOString().split('T')[0] : ''}
+                  className="input w-full text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-mc-text-secondary block mb-1">
+                  Priority
+                </label>
+                <select
+                  id="quick-priority"
+                  defaultValue={selectedTask.priority}
+                  className="input w-full text-sm"
+                >
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
+
+              <div className="flex gap-2 pt-3">
+                <button
+                  onClick={async () => {
+                    const title = (document.getElementById('quick-title') as HTMLInputElement)?.value || selectedTask.title;
+                    const dueDate = (document.getElementById('quick-date') as HTMLInputElement)?.value;
+                    const priority = (document.getElementById('quick-priority') as HTMLSelectElement)?.value;
+
+                    await onTaskUpdate(selectedTask.id, {
+                      title,
+                      dueDate: dueDate || null,
+                      priority: priority as any,
+                    });
+                    setShowEditModal(false);
+                  }}
+                  className="btn-primary text-sm flex-1"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="btn-secondary text-sm flex-1"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };
