@@ -14,6 +14,7 @@ import { KanbanBoard } from '@/components/KanbanBoard';
 import { ToolsPanel } from '@/components/ToolsPanel';
 import { TaskModal } from '@/components/TaskModal';
 import { MobileTaskDetail } from '@/components/MobileTaskDetail';
+import { TaskDetailPanel } from '@/components/TaskDetailPanel';
 import { Header } from '@/components/Header';
 import { FilterBar } from '@/components/FilterBar';
 import CalendarPanel from '@/components/panels/calendar-panel';
@@ -166,7 +167,8 @@ export default function HomePage() {
 
   const handleSelectTask = useCallback((task: Task) => {
     setSelectedTask(task);
-    setSidebarOpen(true); // Auto-open sidebar when task is selected
+    // Don't auto-open sidebar for Kanban view — TaskDetailPanel handles editing
+    // Only auto-open for other views where sidebar has tools
   }, []);
 
   const assignees = useMemo(() => getUniqueAssignees(tasks), [tasks]);
@@ -294,10 +296,19 @@ export default function HomePage() {
       {/* Edit Task Modal - Desktop only - Only show if explicitly opened */}
       {/* (Removed auto-open on selection to avoid blocking the sidebar) */}
 
+      {/* Task Detail Panel - Desktop edit view */}
+      <TaskDetailPanel
+        task={selectedTask}
+        isOpen={!!selectedTask && viewMode === 'kanban'}
+        onClose={() => setSelectedTask(null)}
+        onUpdate={handleUpdateTask}
+        onDelete={handleDeleteTask}
+      />
+
       {/* Mobile Task Detail - Mobile only */}
       <MobileTaskDetail
         task={selectedTask}
-        isOpen={!!selectedTask}
+        isOpen={!!selectedTask && viewMode !== 'kanban'}
         onClose={() => setSelectedTask(null)}
         tasks={tasks}
         onTaskUpdate={handleUpdateTask}
