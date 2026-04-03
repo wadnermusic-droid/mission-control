@@ -26,10 +26,12 @@ model User {
   updatedAt                 DateTime  @updatedAt
 
   // Relations
-  sessions      Session[]
-  tasks         Task[]
-  timeEntries   TimeEntry[]
-  notes         Note[]
+  sessions            Session[]
+  tasks               Task[]
+  timeEntries         TimeEntry[]
+  notes               Note[]
+  pomodoroSessions    PomodoroSession[]
+  taskComments        TaskComment[]
 }
 
 model Session {
@@ -68,6 +70,8 @@ model Task {
   updatedAt   DateTime  @updatedAt
   timeEntries TimeEntry[]
   notes       Note[]
+  pomodoroSessions PomodoroSession[]
+  comments    TaskComment[]
 
   @@index([userId])
 }
@@ -88,6 +92,37 @@ model TimeEntry {
 }
 
 model Note {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([taskId])
+}
+
+model PomodoroSession {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  duration  Int // Duration in seconds (usually 1500 for work, 300 for break)
+  type      String   @default("work") // "work" | "break"
+  completed Boolean  @default(false)
+  startedAt DateTime @default(now())
+  endedAt   DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([taskId])
+}
+
+model TaskComment {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)

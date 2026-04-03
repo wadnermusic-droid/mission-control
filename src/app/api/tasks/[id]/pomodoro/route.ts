@@ -31,16 +31,23 @@ export async function GET(
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    const notes = await prisma.note.findMany({
+    const sessions = await prisma.pomodoroSession.findMany({
       where: { taskId },
-      include: { user: { select: { id: true, name: true, email: true } } },
-      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { id: true, name: true } } },
+      orderBy: { startedAt: 'desc' },
     });
 
-    return NextResponse.json({ notes });
+    const totalDuration = sessions.reduce((sum, s) => sum + s.duration, 0);
+    const completedCount = sessions.filter(s => s.completed).length;
+
+    return NextResponse.json({ 
+      sessions, 
+      totalDuration,
+      completedCount,
+    });
   } catch (error) {
-    console.error('Failed to fetch notes:', error);
-    return NextResponse.json({ error: 'Failed to fetch notes' }, { status: 500 });
+    console.error('Failed to fetch pomodoro sessions:', error);
+    return NextResponse.json({ error: 'Failed to fetch sessions' }, { status: 500 });
   }
 }
 
@@ -62,10 +69,10 @@ export async function POST(
 
     const { id: taskId } = await params;
     const body = await request.json();
-    const { content } = body;
+    const { duration, type, completed } = body;
 
-    if (!content || typeof content !== 'string') {
-      return NextResponse.json({ error: 'Content is required' }, { status: 400 });
+    if (!duration || typeof duration !== 'number') {
+      return NextResponse.json({ error: 'Duration is required' }, { status: 400 });
     }
 
     // Verify task exists and belongs to user
@@ -77,18 +84,20 @@ export async function POST(
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    const note = await prisma.note.create({
+    const session = await prisma.pomodoroSession.create({
       data: {
-        content: content.trim(),
         taskId,
         userId,
+        duration,
+        type: type || 'work',
+        completed: completed || false,
       },
-      include: { user: { select: { id: true, name: true, email: true } } },
+      include: { user: { select: { id: true, name: true } } },
     });
 
-    return NextResponse.json({ note }, { status: 201 });
+    return NextResponse.json({ session }, { status: 201 });
   } catch (error) {
-    console.error('Failed to create note:', error);
-    return NextResponse.json({ error: 'Failed to create note' }, { status: 500 });
+    console.error('Failed to create pomodoro session:', error);
+    return NextResponse.json({ error: 'Failed to create session' }, { status: 500 });
   }
 }
